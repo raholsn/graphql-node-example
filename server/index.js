@@ -1,14 +1,10 @@
 var express = require('express');
 var express_graphql = require('express-graphql');
-const { getGame, getGames } = require('./handler');
 const schema = require('./graphql/schema');
-// GraphQL schema
+const root = require('./graphql/resolver');
 
-// Root resolver
-var root = {
-  game: getGame,
-  games: getGames
-};
+const mongoose = require('mongoose');
+
 // Create an express server and a GraphQL endpoint
 var app = express();
 app.use(
@@ -19,6 +15,8 @@ app.use(
     graphiql: true
   })
 );
+
+mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true });
 
 app.listen(4000, () => console.log('running on localhost:4000/graphql'));
 

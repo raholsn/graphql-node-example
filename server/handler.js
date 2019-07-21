@@ -1,14 +1,24 @@
-const games = require('../server/mongo/mock');
-
+let db = [];
 const getGame = args => {
-  return games.filter(game => game.id === args.id)[0];
+  return db.filter(game => game.id === args.id)[0];
 };
 
 const getGames = () => {
-  return games;
+  return db;
 };
 
-module.exports = { getGame, getGames };
-// exports.getGame = args => {
-//   return games.filter(game => game.id === args.id)[0];
-// };
+const createGame = ({ input }) => {
+  const game = {
+    id: db.length + 1,
+    title: input.title,
+    publisher: input.publisher,
+    developer: input.developer,
+    genre: input.genre
+  };
+
+  db.push(game);
+
+  return game;
+};
+
+module.exports = { getGame, getGames, createGame };
