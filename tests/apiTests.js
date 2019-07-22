@@ -2,45 +2,69 @@ const request = require('supertest');
 const app = require('../server/');
 const assert = require('assert');
 
-describe('query /graphql', function() {
-  it('responds with hello world!', function(done) {
+describe('query  /graphql', function() {
+  it('createGame and getGame should have expected values', function(done) {
+    const expectedTitle = 'sometitle';
+    const expectedPublisher = 'somepublisher';
+    const expectedDeveloper = 'somedeveloper';
+    const expectedGenre = ['g1', 'g2'];
+
+    const query = `mutation Game($expectedTitle: String,$expectedPublisher: String, $expectedDeveloper: String, $expectedGenre:[String]){
+      createGame(input:{
+        title: $expectedTitle,
+        publisher: $expectedPublisher,
+        developer: $expectedDeveloper,
+        genre: $expectedGenre
+    }) {
+      id  
+   }}`;
     let agent = request(app);
     agent
       .post('/graphql')
       .type('json')
-      .send({
-        mutation: `{ createGame(input:{
-            title:"title",
-            publisher: "test",
-            developer: "test",
-            genre : ["g1","g2"]
-          }) {
-             id
+      .send(
+        JSON.stringify({
+          query: query,
+          variables: {
+            expectedTitle,
+            expectedPublisher,
+            expectedDeveloper,
+            expectedGenre
           }
-        }`
-      })
+        })
+      )
       .set('Accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
-        console.log('first body', res.body);
+        const { id } = res.body.data.createGame;
         agent
           .post('/graphql')
           .type('json')
           .send({
-            query: `{ getGame(id:${
-              res.body.id
-            }) {title,publisher,developer,genre} }`
+            query: `query { getGame(id:${id}) {title,publisher,developer,genre} }`
           })
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
             console.log(res.body);
-            console.log(err);
+            const {
+              title,
+              publisher,
+              developer,
+              genre
+            } = res.body.data.getGame;
 
-            if (!err) {
-            }
-            // assert.strictEqual(res.body, gameCommand);
+            assert.deepStrictEqual(
+              { title, publisher, developer, genre },
+              {
+                title: expectedTitle,
+                publisher: expectedPublisher,
+                developer: expectedDeveloper,
+                genre: expectedGenre
+              }
+            );
+
             done();
           });
       });

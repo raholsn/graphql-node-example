@@ -5,7 +5,6 @@ const root = require('./graphql/resolver');
 
 const mongoose = require('mongoose');
 
-// Create an express server and a GraphQL endpoint
 var app = express();
 app.use(
   '/graphql',

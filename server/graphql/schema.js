@@ -1,10 +1,4 @@
-var {
-  buildSchema,
-  GraphQLID,
-  GraphQLString,
-  GraphQLInt,
-  GraphQLInputObjectType
-} = require('graphql');
+var { buildSchema } = require('graphql');
 
 var schema = buildSchema(`
     type Query {
