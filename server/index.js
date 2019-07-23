@@ -1,16 +1,15 @@
 var express = require('express');
 var express_graphql = require('express-graphql');
 const schema = require('./graphql/schema');
-const root = require('./graphql/resolver');
 
 const mongoose = require('mongoose');
 
 var app = express();
+
 app.use(
   '/graphql',
   express_graphql({
     schema: schema,
-    rootValue: root,
     graphiql: true
   })
 );

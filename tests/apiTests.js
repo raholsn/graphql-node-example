@@ -3,18 +3,20 @@ const app = require('../server/');
 const assert = require('assert');
 
 describe('query  /graphql', function() {
-  it('createGame and getGame should have expected values', function(done) {
-    const expectedTitle = 'sometitle';
-    const expectedPublisher = 'somepublisher';
-    const expectedDeveloper = 'somedeveloper';
-    const expectedGenre = ['g1', 'g2'];
+  it('getGame should have expected response & values', function(done) {
+    const input = {
+      title: 'sometitle',
+      publisher: 'somepublisher',
+      developer: 'somedeveloper',
+      genre: ['g1', 'g2']
+    };
 
-    const query = `mutation Game($expectedTitle: String,$expectedPublisher: String, $expectedDeveloper: String, $expectedGenre:[String]){
+    const query = `mutation Game($title: String,$publisher: String, $developer: String, $genre:[String]){
       createGame(input:{
-        title: $expectedTitle,
-        publisher: $expectedPublisher,
-        developer: $expectedDeveloper,
-        genre: $expectedGenre
+        title: $title,
+        publisher: $publisher,
+        developer: $developer,
+        genre: $genre
     }) {
       id  
    }}`;
@@ -26,10 +28,7 @@ describe('query  /graphql', function() {
         JSON.stringify({
           query: query,
           variables: {
-            expectedTitle,
-            expectedPublisher,
-            expectedDeveloper,
-            expectedGenre
+            ...input
           }
         })
       )
@@ -47,24 +46,7 @@ describe('query  /graphql', function() {
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
-            console.log(res.body);
-            const {
-              title,
-              publisher,
-              developer,
-              genre
-            } = res.body.data.getGame;
-
-            assert.deepStrictEqual(
-              { title, publisher, developer, genre },
-              {
-                title: expectedTitle,
-                publisher: expectedPublisher,
-                developer: expectedDeveloper,
-                genre: expectedGenre
-              }
-            );
-
+            assert.deepStrictEqual({ ...res.body.data.getGame }, { ...input });
             done();
           });
       });

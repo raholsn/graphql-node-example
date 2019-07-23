@@ -1,28 +1,56 @@
-var { buildSchema } = require('graphql');
+const {
+  GraphQLObjectType,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLSchema,
+  GraphQLString
+} = require('graphql');
 
-var schema = buildSchema(`
-    type Query {
-      getGame(id: Int!): Game
-      getGames: [Game]
-    }
-    type Game {
-      id: Int
-      title: String
-      publisher: String
-      developer: String
-      genre: [String]
-    }
-    type Mutation {
-      createGame(input: GameCommand): Game
-      updateGame(id: ID!, input: GameCommand): Game
-    }
-    input GameCommand
-    {
-      title: String
-      publisher: String
-      developer: String
-      genre: [String]
-    }
-`);
+const { gameType } = require('./types');
+const { gameInputType } = require('./inputTypes');
+const { getGame, getGames, createGame, updateGame } = require('../handler');
 
-module.exports = schema;
+const query = new GraphQLObjectType({
+  name: 'GameQueries',
+  description: 'queries games',
+  fields: {
+    getGame: {
+      type: gameType,
+      args: {
+        id: { type: GraphQLInt }
+      },
+      resolve: getGame
+    },
+    getGames: {
+      type: GraphQLList(gameType),
+      resolve: getGames
+    }
+  }
+});
+
+const mutation = new GraphQLObjectType({
+  name: 'GameMutations',
+  description: 'mutate games',
+  fields: {
+    createGame: {
+      type: gameType,
+      args: {
+        input: { type: gameInputType }
+      },
+      resolve: createGame
+    },
+    updateGame: {
+      type: gameType,
+      args: {
+        id: { type: GraphQLString },
+        input: { type: gameInputType }
+      },
+      resolve: updateGame
+    }
+  }
+});
+
+module.exports = new GraphQLSchema({
+  query,
+  mutation
+});

@@ -1,13 +1,16 @@
 let db = [];
-const getGame = args => {
-  return db.filter(game => game.id === args.id)[0];
+
+const getGame = (_, { id }) => {
+  console.log(id);
+  return db.filter(game => game.id === id)[0];
 };
 
 const getGames = () => {
+  console.log(db);
   return db;
 };
 
-const createGame = ({ input }) => {
+const createGame = (_, { input }) => {
   const game = {
     id: db.length + 1,
     title: input.title,
@@ -21,4 +24,8 @@ const createGame = ({ input }) => {
   return game;
 };
 
-module.exports = { getGame, getGames, createGame };
+const updateGame = () => {
+  return null;
+};
+
+module.exports = { getGame, getGames, createGame, updateGame };
