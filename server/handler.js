@@ -1,31 +1,65 @@
 let db = [];
 
-const getGame = (_, { id }) => {
-  console.log(id);
-  return db.filter(game => game.id === id)[0];
+const getMob = (_, { id }) => {
+  return getMobById(id);
 };
 
-const getGames = () => {
+const getMobs = () => {
   console.log(db);
   return db;
 };
 
-const createGame = (_, { input }) => {
-  const game = {
-    id: db.length + 1,
-    title: input.title,
-    publisher: input.publisher,
-    developer: input.developer,
-    genre: input.genre
+const createMob = (_, { input }) => {
+  console.log('input', input);
+  const Mob = {
+    _id: db.length + 1,
+    timer: createTimer(input.timer),
+    mobsters: input.mobsters
   };
 
-  db.push(game);
+  db.push(Mob);
 
-  return game;
+  console.log(Mob);
+  return Mob;
 };
 
-const updateGame = () => {
-  return null;
+const createMobsters = mobsters => {
+  console.log('mobster', mobsters);
+  return {
+    mobsters
+  };
 };
 
-module.exports = { getGame, getGames, createGame, updateGame };
+const getMobById = id => {
+  return db.filter(Mob => Mob._id == id)[0];
+};
+
+const rotateMobster = (_, { input }) => {
+  let mob = getMobById(input.id);
+
+  const { endDate, rotationTimeInMinutes } = mob.timer;
+
+  mob.timer.endDate = addMinutes(endDate, rotationTimeInMinutes);
+  mob.mobsters.push(mob.mobsters.shift());
+
+  db[id] = mob;
+
+  return mob;
+};
+
+const createTimer = ({ rotationTimeInMinutes }) => {
+  console.log('rotationTimeInMinutes', rotationTimeInMinutes);
+  const startDate = new Date();
+
+  return {
+    rotationTimeInMinutes,
+    startDate: startDate.toJSON(),
+    endDate: addMinutes(startDate, rotationTimeInMinutes)
+  };
+};
+
+function addMinutes(date, minutes) {
+  return new Date(date.getTime() + minutes * 60000);
+}
+
+module.exports = { getMob, getMobs, createMob, rotateMobster };

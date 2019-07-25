@@ -1,17 +1,31 @@
 const {
   GraphQLString,
-  GraphQLInputObjectType,
-  GraphQLList
+  GraphQLInt,
+  GraphQLList,
+  GraphQLInputObjectType
 } = require('graphql');
 
-const gameInputType = new GraphQLInputObjectType({
-  name: 'GameInput',
+const timerInputType = new GraphQLInputObjectType({
+  name: 'TimerInput',
   fields: {
-    title: { type: GraphQLString },
-    publisher: { type: GraphQLString },
-    developer: { type: GraphQLString },
-    genre: { type: new GraphQLList(GraphQLString) }
+    rotationTimeInMinutes: { type: GraphQLInt }
   }
 });
 
-module.exports = { gameInputType };
+const mobsterInputType = new GraphQLInputObjectType({
+  name: 'MobsterInput',
+  fields: {
+    name: { type: GraphQLString },
+    position: { type: GraphQLInt }
+  }
+});
+
+const mobInputType = new GraphQLInputObjectType({
+  name: 'MobInput',
+  fields: {
+    timer: { type: timerInputType },
+    mobsters: { type: new GraphQLList(mobsterInputType) }
+  }
+});
+
+module.exports = { mobInputType, mobsterInputType, timerInputType };

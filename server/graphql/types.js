@@ -1,19 +1,38 @@
 const {
   GraphQLObjectType,
+  GraphQLID,
+  GraphQLList,
   GraphQLString,
-  GraphQLInt,
-  GraphQLList
+  GraphQLInt
 } = require('graphql');
 
-const gameType = new GraphQLObjectType({
-  name: 'Game',
+const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
+
+const timerType = new GraphQLObjectType({
+  name: 'Timer',
   fields: {
-    id: { type: GraphQLInt },
-    title: { type: GraphQLString },
-    publisher: { type: GraphQLString },
-    developer: { type: GraphQLString },
-    genre: { type: new GraphQLList(GraphQLString) }
+    startDate: {
+      type: GraphQLDateTime
+    },
+    endDate: { type: GraphQLDateTime }
   }
 });
 
-module.exports = { gameType };
+const mobsterType = new GraphQLObjectType({
+  name: 'Mobster',
+  fields: {
+    name: { type: GraphQLString },
+    position: { type: GraphQLInt }
+  }
+});
+
+const mobType = new GraphQLObjectType({
+  name: 'Mob',
+  fields: {
+    _id: { type: GraphQLID },
+    timer: { type: timerType },
+    mobsters: { type: new GraphQLList(mobsterType) }
+  }
+});
+
+module.exports = { mobType, mobsterType, timerType };

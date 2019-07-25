@@ -2,50 +2,48 @@ const {
   GraphQLObjectType,
   GraphQLInt,
   GraphQLList,
-  GraphQLSchema,
-  GraphQLString
+  GraphQLSchema
 } = require('graphql');
 
-const { gameType } = require('./types');
-const { gameInputType } = require('./inputTypes');
-const { getGame, getGames, createGame, updateGame } = require('../handler');
+const { mobType } = require('./types');
+const { mobInputType } = require('./inputTypes');
+const { getMob, getMobs, createMob, rotateMobster } = require('../handler');
 
 const query = new GraphQLObjectType({
-  name: 'GameQueries',
-  description: 'queries games',
+  name: 'mobQueries',
+  description: 'queries mobs',
   fields: {
-    getGame: {
-      type: gameType,
+    getmob: {
+      type: mobType,
       args: {
         id: { type: GraphQLInt }
       },
-      resolve: getGame
+      resolve: getMob
     },
-    getGames: {
-      type: GraphQLList(gameType),
-      resolve: getGames
+    getmobs: {
+      type: GraphQLList(mobType),
+      resolve: getMobs
     }
   }
 });
 
 const mutation = new GraphQLObjectType({
-  name: 'GameMutations',
-  description: 'mutate games',
+  name: 'mobMutations',
+  description: 'mutate mobs',
   fields: {
-    createGame: {
-      type: gameType,
+    createmob: {
+      type: mobType,
       args: {
-        input: { type: gameInputType }
+        input: { type: mobInputType }
       },
-      resolve: createGame
+      resolve: createMob
     },
-    updateGame: {
-      type: gameType,
+    rotateMobster: {
+      type: mobType,
       args: {
-        id: { type: GraphQLString },
-        input: { type: gameInputType }
+        input: { type: GraphQLInt }
       },
-      resolve: updateGame
+      resolve: rotateMobster
     }
   }
 });
