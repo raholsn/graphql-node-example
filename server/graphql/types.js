@@ -1,12 +1,11 @@
 const {
   GraphQLObjectType,
-  GraphQLID,
   GraphQLList,
   GraphQLString,
   GraphQLInt
 } = require('graphql');
 
-const { GraphQLDate, GraphQLDateTime } = require('graphql-iso-date');
+const { GraphQLDateTime } = require('graphql-iso-date');
 
 const timerType = new GraphQLObjectType({
   name: 'Timer',
@@ -29,7 +28,7 @@ const mobsterType = new GraphQLObjectType({
 const mobType = new GraphQLObjectType({
   name: 'Mob',
   fields: {
-    _id: { type: GraphQLID },
+    _id: { type: GraphQLString },
     timer: { type: timerType },
     mobsters: { type: new GraphQLList(mobsterType) }
   }

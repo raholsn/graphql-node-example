@@ -5,21 +5,21 @@ const assert = require('assert');
 describe('query  /graphql', function() {
   it('getGame should have expected response & values', function(done) {
     const input = {
-      title: 'sometitle',
-      publisher: 'somepublisher',
-      developer: 'somedeveloper',
-      genre: ['g1', 'g2']
+      timer: { rotationTimeInMinutes: 13 },
+      mobsters: [
+        { name: 'Mobster1', position: 1 },
+        { name: 'Mobster2', position: 2 }
+      ]
     };
 
-    const query = `mutation Game($title: String,$publisher: String, $developer: String, $genre:[String]){
-      createGame(input:{
-        title: $title,
-        publisher: $publisher,
-        developer: $developer,
-        genre: $genre
-    }) {
-      id  
-   }}`;
+    const query = `
+    mutation Mob($input: MobInput){
+      createmob(
+        input: $input
+      ){
+        _id
+      }
+    }`;
     let agent = request(app);
     agent
       .post('/graphql')
@@ -28,25 +28,51 @@ describe('query  /graphql', function() {
         JSON.stringify({
           query: query,
           variables: {
-            ...input
+            input
           }
         })
       )
       .set('Accept', 'application/json')
       .expect(200)
       .end(function(err, res) {
-        const { id } = res.body.data.createGame;
+        const { _id } = res.body.data.createmob;
+        const query = `query Mob($id: String){
+          getmob(id:$id){
+            _id,
+            timer {
+              startDate
+              endDate
+            },
+            mobsters {
+              name
+              position
+            }
+          }
+        }`;
         agent
           .post('/graphql')
           .type('json')
-          .send({
-            query: `query { getGame(id:${id}) {title,publisher,developer,genre} }`
-          })
+          .send(
+            JSON.stringify({
+              query: query,
+              variables: {
+                id: _id
+              }
+            })
+          )
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err, res) {
-            assert.deepStrictEqual({ ...res.body.data.getGame }, { ...input });
+            console.log('actual', res.body.data.getmob);
+            console.log('expected', { ...input });
+
+            const { mobsters, timer } = res.body.data.getmob;
+
+            assert.deepStrictEqual({ ...mobsters }, { ...input.mobsters });
+            assert.notEqual(timer.startDate, null);
+            assert.notEqual(timer.endDate, null);
+
             done();
           });
       });

@@ -1,8 +1,8 @@
 const {
+  GraphQLSchema,
   GraphQLObjectType,
-  GraphQLInt,
   GraphQLList,
-  GraphQLSchema
+  GraphQLString
 } = require('graphql');
 
 const { mobType } = require('./types');
@@ -16,7 +16,7 @@ const query = new GraphQLObjectType({
     getmob: {
       type: mobType,
       args: {
-        id: { type: GraphQLInt }
+        id: { type: GraphQLString }
       },
       resolve: getMob
     },
@@ -41,7 +41,7 @@ const mutation = new GraphQLObjectType({
     rotateMobster: {
       type: mobType,
       args: {
-        input: { type: GraphQLInt }
+        input: { type: GraphQLString }
       },
       resolve: rotateMobster
     }

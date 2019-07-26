@@ -1,33 +1,20 @@
+const uuidv1 = require('uuid/v1');
+
 let db = [];
 
-const getMob = (_, { id }) => {
-  return getMobById(id);
-};
+const getMob = (_, { id }) => getMobById(id);
 
-const getMobs = () => {
-  console.log(db);
-  return db;
-};
+const getMobs = () => db;
 
 const createMob = (_, { input }) => {
-  console.log('input', input);
   const Mob = {
-    _id: db.length + 1,
+    _id: uuidv1(),
     timer: createTimer(input.timer),
     mobsters: input.mobsters
   };
-
   db.push(Mob);
 
-  console.log(Mob);
   return Mob;
-};
-
-const createMobsters = mobsters => {
-  console.log('mobster', mobsters);
-  return {
-    mobsters
-  };
 };
 
 const getMobById = id => {
@@ -35,20 +22,25 @@ const getMobById = id => {
 };
 
 const rotateMobster = (_, { input }) => {
-  let mob = getMobById(input.id);
+  let mob = getMobById(input);
+
+  if (mob === undefined) {
+    return null;
+  }
 
   const { endDate, rotationTimeInMinutes } = mob.timer;
-
   mob.timer.endDate = addMinutes(endDate, rotationTimeInMinutes);
   mob.mobsters.push(mob.mobsters.shift());
+  mob.mobsters.map(mobster => {
+    mobster.position = mob.mobsters.indexOf(mobster) + 1;
+  });
 
-  db[id] = mob;
+  db[input] = mob;
 
   return mob;
 };
 
 const createTimer = ({ rotationTimeInMinutes }) => {
-  console.log('rotationTimeInMinutes', rotationTimeInMinutes);
   const startDate = new Date();
 
   return {
