@@ -1,10 +1,16 @@
 # graphql-node-reproduction
 
-todo:
-* add edges and connections
-* add mongodb
-* add graphql validation
-* add proper http status codes
-* add restucturing
-* add docker-compose with mongodb
-* extend integration-tests
+Trying out graphql in node.js.
+
+The application improvises a mob-programming-timer with mobsters and a timer.
+The mobsters have a position and a name.
+The timer has a startDate and a endDate.
+
+Queries: GetMob, GetMob
+
+Mutations: CreateMob, RotateMobster
+
+Supertest and mocha for testing.
+
+graphql-iso-date for date in graphql-schema
+
